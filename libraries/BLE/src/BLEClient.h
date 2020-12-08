@@ -58,7 +58,7 @@ public:
 	esp_gatt_if_t                              getGattcIf();
 	uint16_t								   getMTU();
 
-uint16_t m_appId;
+uint16_t m_appId = 0;
 private:
 	friend class BLEDevice;
 	friend class BLERemoteService;

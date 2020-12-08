@@ -179,7 +179,7 @@ void init() __attribute__((weak));
 void init() {}
 
 bool verifyOta() __attribute__((weak));
-bool verifyOta() { return true; }
+bool verifyOta() { return false; }
 
 #ifdef CONFIG_BT_ENABLED
 //overwritten in esp32-hal-bt.c
@@ -229,7 +229,7 @@ void initArduino()
     }
 #ifdef CONFIG_BT_ENABLED
     if(!btInUse()){
-        esp_bt_controller_mem_release(ESP_BT_MODE_BTDM);
+        //esp_bt_controller_mem_release(ESP_BT_MODE_BTDM);
     }
 #endif
     init();

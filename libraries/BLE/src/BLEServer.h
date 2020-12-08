@@ -26,7 +26,8 @@
 class BLEServerCallbacks;
 /* TODO possibly refactor this struct */ 
 typedef struct {
-	void *peer_device;		// peer device BLEClient or BLEServer - maybe its better to have 2 structures or union here
+	void *client_device;		// peer device BLEClient or BLEServer - maybe its better to have 2 structures 
+	void *server_device;
 	bool connected;			// do we need it?
 	uint16_t mtu;			// every peer device negotiate own mtu
 } conn_status_t;

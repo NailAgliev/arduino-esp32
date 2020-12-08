@@ -961,7 +961,7 @@ std::string BLEUtils::gattClientEventTypeToString(esp_gattc_cb_event_t eventType
  */
 std::string BLEUtils::gattServerEventTypeToString(esp_gatts_cb_event_t eventType) {
 	switch (eventType) {
-#if CONFIG_LOG_DEFAULT_LEVEL > 4
+#if CONFIG_LOG_DEFAULT_LEVEL < 4
 		case ESP_GATTS_REG_EVT:
 			return "ESP_GATTS_REG_EVT";
 		case ESP_GATTS_READ_EVT:
@@ -1901,7 +1901,7 @@ std::string BLEUtils::gattServiceToString(uint32_t serviceId) {
  */
 std::string BLEUtils::gattStatusToString(esp_gatt_status_t status) {
 	switch (status) {
-#if CONFIG_LOG_DEFAULT_LEVEL > 4
+#if CONFIG_LOG_DEFAULT_LEVEL < 4
 		case ESP_GATT_OK:
 			return "ESP_GATT_OK";
 		case ESP_GATT_INVALID_HANDLE:

@@ -163,8 +163,8 @@ gatts_event_handler BLEDevice::m_customGattsHandler = nullptr;
 	} // switch
 	for(auto &myPair : BLEDevice::getPeerDevices(true)) {
 		conn_status_t conn_status = (conn_status_t)myPair.second;
-		if(((BLEClient*)conn_status.peer_device)->getGattcIf() == gattc_if || ((BLEClient*)conn_status.peer_device)->getGattcIf() == ESP_GATT_IF_NONE || gattc_if == ESP_GATT_IF_NONE){
-			((BLEClient*)conn_status.peer_device)->gattClientEventHandler(event, gattc_if, param);
+		if(((BLEClient*)conn_status.client_device)->getGattcIf() == gattc_if || ((BLEClient*)conn_status.client_device)->getGattcIf() == ESP_GATT_IF_NONE || gattc_if == ESP_GATT_IF_NONE){
+			((BLEClient*)conn_status.client_device)->gattClientEventHandler(event, gattc_if, param);
 		}
 	}
 
@@ -364,6 +364,7 @@ gatts_event_handler BLEDevice::m_customGattsHandler = nullptr;
 			return;
 		}
 #else
+		log_e("ESP_BT_MODE_BTDM:\n");
 		errRc = esp_bt_controller_enable(ESP_BT_MODE_BTDM);
 		if (errRc != ESP_OK) {
 			log_e("esp_bt_controller_enable: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
@@ -595,11 +596,29 @@ void BLEDevice::stopAdvertising() {
 /* multi connect support */
 /* requires a little more work */
 std::map<uint16_t, conn_status_t> BLEDevice::getPeerDevices(bool _client) {
-	return m_connectedClientsMap;
+	std::map<uint16_t, conn_status_t> map;
+	for (auto elem : m_connectedClientsMap){
+		if (_client)
+		{
+			if (elem.second.client_device != NULL)
+			{
+				map.insert(elem);
+			}
+		}else
+		{
+			if (elem.second.server_device != NULL)
+			{
+				map.insert(elem);
+			}
+		}
+		
+		
+	}
+	return map;
 }
 
 BLEClient* BLEDevice::getClientByGattIf(uint16_t conn_id) {
-	return (BLEClient*)m_connectedClientsMap.find(conn_id)->second.peer_device;
+	return (BLEClient*)m_connectedClientsMap.find(conn_id)->second.client_device;
 }
 
 void BLEDevice::updatePeerDevice(void* peer, bool _client, uint16_t conn_id) {
@@ -612,20 +631,28 @@ void BLEDevice::updatePeerDevice(void* peer, bool _client, uint16_t conn_id) {
 		it = m_connectedClientsMap.find(conn_id);
 		if (it != m_connectedClientsMap.end()) {
 			conn_status_t _st = it->second;
-			_st.peer_device = peer;
+			_st.client_device = peer;
 			std::swap(m_connectedClientsMap[conn_id], _st);
 		}
 	}
 }
 
 void BLEDevice::addPeerDevice(void* peer, bool _client, uint16_t conn_id) {
-	log_i("add conn_id: %d, GATT role: %s", conn_id, _client? "client":"server");
+	log_v("add conn_id: %d, GATT role: %s", conn_id, _client? "client":"server");
 	conn_status_t status = {
-		.peer_device = peer,
 		.connected = true,
 		.mtu = 23
 	};
 
+	if (_client)
+	{
+		status.client_device = peer;
+	}else
+	{
+		status.server_device = peer;
+	}
+	
+	
 	m_connectedClientsMap.insert(std::pair<uint16_t, conn_status_t>(conn_id, status));
 }
 

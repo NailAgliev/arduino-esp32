@@ -189,6 +189,7 @@ void BLEClient::gattClientEventHandler(
 				m_semaphoreRssiCmplEvt.give();
 				m_semaphoreSearchCmplEvt.give(1);
 				BLEDevice::removePeerDevice(m_appId, true);
+				m_appId = BLEDevice::m_appId--;
 				break;
 		} // ESP_GATTC_DISCONNECT_EVT
 

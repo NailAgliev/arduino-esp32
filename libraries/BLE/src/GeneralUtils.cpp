@@ -368,7 +368,7 @@ std::vector<std::string> GeneralUtils::split(std::string source, char delimiter)
  */
 const char* GeneralUtils::errorToString(esp_err_t errCode) {
 	switch (errCode) {
-#if CONFIG_LOG_DEFAULT_LEVEL > 4
+#if CONFIG_LOG_DEFAULT_LEVEL < 4
 		case ESP_OK:
 			return "ESP_OK";
 		case ESP_FAIL:
