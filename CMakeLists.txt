@@ -148,3 +148,7 @@ set(COMPONENT_REQUIRES spi_flash mbedtls mdns esp_adc_cal)
 set(COMPONENT_PRIV_REQUIRES fatfs nvs_flash app_update spiffs bootloader_support openssl bt)
 
 register_component()
+
+if(IDF_TARGET STREQUAL "esp32")
+target_compile_options(${COMPONENT_TARGET} PUBLIC -DARDUINO=10812 -DARDUINO_ESP32_DEV -DARDUINO_ARCH_ESP32 -DARDUINO_BOARD="ESP32_DEV" -DARDUINO_VARIANT="esp32" -DESP32)
+endif()
